@@ -33,7 +33,7 @@ func main() {
 
 func streamVideo(w http.ResponseWriter, r *http.Request) {
 	log.Println("GET /stream")
-	chunkSize := 1024
+	chunkSize := 16384
 
 	q := r.URL.Query()
 	if q.Get("chunkSize") != "" {
