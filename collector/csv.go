@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"time"
@@ -18,7 +17,6 @@ func saveToEmergencyCsv(run *TestRun) error {
 
 func writeToCsv(file string, run *TestRun) error {
 	if _, err := os.Stat(file); os.IsNotExist(err) {
-		log.Println("Creating new CSV file", file)
 		parts := []string{
 			"id", "protocol", "enviroment", "time_slot", "test_begin", "test_end", "client_id", "parallel_clients",
 			"transfer_start_unix", "transfer_end_unix", "latency_ms", "throughput_mbps", "bytes_sent_total", "bytes_payload", "bandwidth_efficiency",
