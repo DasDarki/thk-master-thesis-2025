@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@roamhq/wrtc": "^0.8.0",
+    "axios": "^1.8.4",
     "simple-peer": "^9.11.1",
     "ws": "^8.18.1"
   },

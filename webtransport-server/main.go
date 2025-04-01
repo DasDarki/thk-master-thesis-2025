@@ -6,9 +6,13 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
+	"time"
 
 	"github.com/quic-go/quic-go/http3"
 	"github.com/quic-go/webtransport-go"
+	"github.com/shirou/gopsutil/v4/cpu"
+	"github.com/shirou/gopsutil/v4/mem"
 )
 
 var assetsDir = path.Join("..", "assets")
@@ -39,6 +43,12 @@ func main() {
 
 func streamVideo(w http.ResponseWriter, r *http.Request) {
 	log.Println("GET /stream")
+
+	runID, err := strconv.Atoi(r.URL.Query().Get("runID"))
+	if err != nil {
+		http.Error(w, "Invalid runID", http.StatusBadRequest)
+		return
+	}
 
 	sess, err := webtransportSrv.Upgrade(w, r)
 	if err != nil {
@@ -74,6 +84,18 @@ func streamVideo(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Streaming video (%d bytes): %s", stat.Size(), videoFile)
 
+	transferStart := time.Now().Unix()
+	cpuBefore := getCpuUsagePercentage()
+	ramBefore := getRamUsageBytes()
+	cpuWhile := float64(0)
+	ramWhile := uint64(0)
+
+	go func() {
+		time.Sleep(500 * time.Millisecond)
+		cpuWhile = getCpuUsagePercentage()
+		ramWhile = getRamUsageBytes()
+	}()
+
 	_, err = io.Copy(stream, file)
 	if err != nil {
 		log.Printf("Error while streaming: %v", err)
@@ -81,5 +103,36 @@ func streamVideo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	stream.Close()
+
+	cpuAfter := getCpuUsagePercentage()
+	ramAfter := getRamUsageBytes()
+
+	collectMetrics(runID, map[string]any{
+		"TransferStartUnix":      transferStart,
+		"BytesPayload":           stat.Size(),
+		"CpuServerPercentBefore": cpuBefore,
+		"CpuServerPercentWhile":  cpuWhile,
+		"CpuServerPercentAfter":  cpuAfter,
+		"RamServerBytesBefore":   ramBefore,
+		"RamServerBytesWhile":    ramWhile,
+		"RamServerBytesAfter":    ramAfter,
+	})
+
 	log.Println("Streaming finished successfully")
+}
+
+func getCpuUsagePercentage() float64 {
+	percentages, err := cpu.Percent(500*time.Millisecond, false)
+	if err != nil || len(percentages) == 0 {
+		return 0.0
+	}
+	return percentages[0]
+}
+
+func getRamUsageBytes() uint64 {
+	vmStat, err := mem.VirtualMemory()
+	if err != nil {
+		return 0
+	}
+	return vmStat.Used
 }
