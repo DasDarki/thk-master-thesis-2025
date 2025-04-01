@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -68,7 +69,7 @@ func main() {
 		buf := make([]byte, 1024)
 		n, err := resp.Body.Read(buf)
 		if err != nil {
-			if err == http.ErrBodyReadAfterClose {
+			if err == http.ErrBodyReadAfterClose || err == io.EOF || err.Error() == "204 No Content" {
 				log.Println("Connection closed by server")
 			} else {
 				collectMetrics(runID, map[string]any{
@@ -88,7 +89,7 @@ func main() {
 
 	collectMetrics(runID, map[string]any{
 		"TransferEndUnix":        time.Now().Unix(),
-		"ConnectionDuration":     time.Since(connectEstablishTime).Seconds(),
+		"ConnectionDuration":     time.Since(connectEstablishTime).Milliseconds(),
 		"CpuClientPercentBefore": cpuBefore,
 		"CpuClientPercentWhile":  cpuWhile,
 		"CpuClientPercentAfter":  cpuAfter,

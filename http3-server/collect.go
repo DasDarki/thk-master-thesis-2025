@@ -33,7 +33,7 @@ func collectMetrics(runID int, data map[string]any) {
 	}
 
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
 		fmt.Println("[COLLECTOR] Error response from server:", resp.Status)
 		return
 	}

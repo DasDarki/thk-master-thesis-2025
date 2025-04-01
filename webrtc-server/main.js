@@ -16,12 +16,12 @@ wss.on('connection', ws => {
       const runID = message.toString().split('_')[1];
       ws.send('ACK');
 
-      handle(runID).catch(err => console.error('Error in handle:', err));
+      handle(runID, ws).catch(err => console.error('Error in handle:', err));
     }
   });
 });
 
-async function handle(runID) {
+async function handle(runID, ws) {
   const peer = new Peer({ initiator: true, wrtc });
 
   peer.on('signal', data => {
@@ -115,7 +115,11 @@ wss.on('listening', () => console.log('Server started on port 2502'));
 
 async function collectMetrics(runID, data) {
   try {
-    await axios.put(`https://thkm25_collect.nauri.io/${runID}/update`, data);
+    await axios.put(`https://thkm25_collect.nauri.io/${runID}/update`, data, {
+      headers: {
+        'X-API-KEY': 'thk_masterthesis_2025_hwtwswrtc'
+      }
+    });
     console.log('[COLLECTOR] Metrics collected!');
   } catch (error) {
     console.error('[COLLECTOR] Error collecting metrics:', error);

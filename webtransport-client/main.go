@@ -85,7 +85,7 @@ func main() {
 
 	collectMetrics(runID, map[string]any{
 		"TransferEndUnix":        time.Now().Unix(),
-		"ConnectionDuration":     time.Since(connectEstablishTime).Seconds(),
+		"ConnectionDuration":     time.Since(connectEstablishTime).Milliseconds(),
 		"CpuClientPercentBefore": cpuBefore,
 		"CpuClientPercentWhile":  cpuWhile,
 		"CpuClientPercentAfter":  cpuAfter,

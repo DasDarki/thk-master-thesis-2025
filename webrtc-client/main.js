@@ -66,9 +66,9 @@ async function handle() {
         const ramAfter = await getRamUsageBytes();
         const [lostAfter, recvAfter] = await getPacketStats();
 
-        await collectMetrics(runID, {
+        await collectMetrics({
           "TransferStartUnix": Date.now(),
-          "ConnectionDuration": (Date.now() - connectionEstablished) / 1000,
+          "ConnectionDuration": Date.now() - connectionEstablished,
           "CpuClientPercentBefore": cpuBefore,
           "CpuClientPercentWhile": cpuWhile,
           "CpuClientPercentAfter": cpuAfter,
@@ -103,7 +103,12 @@ async function handle() {
 
 async function collectMetrics(data) {
   try {
-    await axios.put(`https://thkm25_collect.nauri.io/${runID}/update`, data);
+    console.log(data);
+    await axios.put(`https://thkm25_collect.nauri.io/${runID}/update`, data, {
+      headers: {
+        'X-API-KEY': 'thk_masterthesis_2025_hwtwswrtc'
+      }
+    });
     console.log('[COLLECTOR] Metrics collected!');
   } catch (error) {
     console.error('[COLLECTOR] Error collecting metrics:', error);

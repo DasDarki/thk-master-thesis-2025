@@ -59,7 +59,7 @@ type TestRun struct {
 	RamServerBytesWhile    int64   // RAM usage of the server while the transfer
 	LostPackets            int64   // number of lost packets
 	Retransmissions        int64   // number of retransmissions
-	ConnectionDuration     int64   // duration of the connection in seconds
+	ConnectionDuration     int64   // duration of the connection in millis
 	StreamDuration         int64   // duration of the stream in seconds
 	Error                  string  // error message if the test failed, empty string otherwise
 }
