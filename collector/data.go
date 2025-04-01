@@ -2,8 +2,6 @@ package main
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Protocol string
@@ -32,25 +30,21 @@ const (
 )
 
 type TestRun struct {
-	ID              uuid.UUID
-	Protocol        Protocol
-	Enviroment      Enviroment
-	TimeSlot        TimeSlot
-	TestBegin       time.Time
-	TestEnd         time.Time
-	ClientID        int // used for parallel runs identification
-	ParallelClients int // number of parallel clients (used for parallel runs identification)
-	Data            TestRunData
-}
-
-type TestRunData struct {
-	TransferStartUnix      int64   // unix timestamp in milliseconds when the transfer started
-	TransferEndUnix        int64   // unix timestamp in milliseconds when the transfer ended
-	LatencyMs              int64   // difference between TransferStartUnix and TransferEndUnix
-	ThroughputMbps         float64 // throughput in Mbps
-	BytesSentTotal         int64   // total bytes sent
-	BytesPayload           int64   // bytes sent excluding headers
-	BandwidthEfficiency    float64 // BytesPayload / BytesSentTotal
+	ID                int64 `gorm:"primaryKey;autoIncrement"`
+	Protocol          Protocol
+	Enviroment        Enviroment
+	TimeSlot          TimeSlot
+	TestBegin         time.Time
+	TestEnd           time.Time
+	ClientID          int   // used for parallel runs identification
+	ParallelClients   int   // number of parallel clients (used for parallel runs identification)
+	TransferStartUnix int64 // unix timestamp in milliseconds when the transfer started
+	TransferEndUnix   int64 // unix timestamp in milliseconds when the transfer ended
+	//LatencyMs              int64   // difference between TransferStartUnix and TransferEndUnix
+	ThroughputMbps float64 // throughput in Mbps
+	BytesSentTotal int64   // total bytes sent
+	BytesPayload   int64   // bytes sent excluding headers
+	//BandwidthEfficiency    float64 // BytesPayload / BytesSentTotal
 	CpuClientPercentBefore float64 // CPU usage of the client before the transfer
 	CpuClientPercentAfter  float64 // CPU usage of the client after the transfer
 	CpuClientPercentWhile  float64 // CPU usage of the client while the transfer
@@ -63,9 +57,17 @@ type TestRunData struct {
 	RamServerBytesBefore   int64   // RAM usage of the server before the transfer
 	RamServerBytesAfter    int64   // RAM usage of the server after the transfer
 	RamServerBytesWhile    int64   // RAM usage of the server while the transfer
-	LostPackets            int     // number of lost packets
-	Retransmissions        int     // number of retransmissions
+	LostPackets            int64   // number of lost packets
+	Retransmissions        int64   // number of retransmissions
 	ConnectionDuration     int64   // duration of the connection in seconds
 	StreamDuration         int64   // duration of the stream in seconds
 	Error                  string  // error message if the test failed, empty string otherwise
+}
+
+func (t TestRun) LatencyMs() int64 {
+	return t.TransferEndUnix - t.TransferStartUnix
+}
+
+func (t TestRun) BandwidthEfficiency() float64 {
+	return float64(t.BytesPayload) / float64(t.BytesSentTotal)
 }
