@@ -54,7 +54,7 @@ async function handle() {
   const [lost, recv] = await getPacketStats();
 
   let first = true;
-  const fileStream = fs.createWriteStream('output.mp4');
+  const fileStream = fs.createWriteStream(`output${runID}.mp4`);
   peer.on('data', chunk => {
     if (chunk.toString() === '__EOF__') {
       console.log('File fully received');

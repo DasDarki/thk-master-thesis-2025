@@ -58,7 +58,7 @@ func main() {
 
 	defer resp.Body.Close()
 
-	output, err := os.Create("output.mp4")
+	output, err := os.Create(fmt.Sprintf("output_%d.mp4", runID))
 	if err != nil {
 		log.Fatalf("Failed to create file: %v", err)
 	}

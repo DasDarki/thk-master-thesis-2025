@@ -63,7 +63,7 @@ func main() {
 		log.Fatalf("Could not accept stream: %v", err)
 	}
 
-	file, err := os.Create("output.mp4")
+	file, err := os.Create(fmt.Sprintf("output_%d.mp4", runID))
 	if err != nil {
 		log.Fatalf("Could not create file: %v", err)
 	}
