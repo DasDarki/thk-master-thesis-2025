@@ -19,6 +19,13 @@ var videoFile = path.Join(assetsDir, "sample_video.mp4")
 var upgrader = websocket.Upgrader{}
 
 func main() {
+	stat, err := os.Stat(videoFile)
+	if err != nil {
+		log.Fatalf("Failed to get file info: %v", err)
+	}
+
+	log.Printf("File %s exists, size: %d bytes", videoFile, stat.Size())
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("GET /")
 

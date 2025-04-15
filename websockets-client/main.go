@@ -15,7 +15,7 @@ import (
 )
 
 const URL = "ws://localhost:2503"
-const REMOTE_URL = "https://thkm25_websockets.nauri.io"
+const REMOTE_URL = "wss://thkm25_websockets.nauri.io"
 
 func main() {
 	url, runID := parseArguments()

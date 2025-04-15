@@ -8,7 +8,7 @@ const os = require('os');
 
 const [runID, isLocal] = parseArguments();
 
-const ws = new WebSocket(isLocal ? 'ws://localhost:2502' : 'wss://thkm25_websockets.nauri.io');
+const ws = new WebSocket(isLocal ? 'ws://localhost:2502' : 'wss://thkm25_webrtc.nauri.io');
 let peer;
 
 ws.on('open', () => {
@@ -82,7 +82,6 @@ async function handle() {
       return;
     }
   
-    console.log('Received chunk...');
     fileStream.write(Buffer.from(chunk));
 
     if (first) {

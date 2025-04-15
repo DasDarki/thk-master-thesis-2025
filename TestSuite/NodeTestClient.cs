@@ -12,8 +12,8 @@ public sealed class NodeTestClient(string protocol) : TestClient(protocol)
         return new ProcessStartInfo
         {
             WorkingDirectory = GetTestClientWorkingDir(),
-            FileName = "node main.js",
-            Arguments = $"-r{id}{(local ? " -l" : "")}",
+            FileName = "node",
+            Arguments = $"main.js -r{id}{(local ? " -l" : "")}",
         };
     }
 }

@@ -38,8 +38,15 @@ internal class Program
                     AnsiConsole.Write(new Markup("[bold green]Running " + parallelClient +
                                                  " parallel clients...[/]\n"));
 
-                    var client = GetTestClient(protocol);
-                    Tester.Run(client, local, timeSlot, parallelClient);
+                    var reruns = GetRerunsForParallels(parallelClient, timeSlot);
+                    for (var i = 0; i < reruns; i++)
+                    {
+                        AnsiConsole.Write(new Markup("[bold yellow]Running test run " + (i + 1) + " of " + reruns +
+                                                     " for " + parallelClient + " parallel clients...[/]\n"));
+                        
+                        var client = GetTestClient(protocol);
+                        Tester.Run(client, local, timeSlot, parallelClient);
+                    }
 
                     AnsiConsole.Write(new Markup("[bold green]Finished running " + parallelClient +
                                                  " parallel clients.[/]\n"));
@@ -66,6 +73,18 @@ internal class Program
             Tester.ProtocolWebSockets => Tester.WebSocketsClient,
             Tester.ProtocolWebRTC => Tester.WebRTCClient,
             _ => throw new ArgumentException("Invalid protocol: " + protocol)
+        };
+    }
+
+    private static int GetRerunsForParallels(int parallelClients, string timeSlot)
+    {
+        return parallelClients switch
+        {
+            1 => 25,
+            5 => 3,
+            10 => 3,
+            20 => 3,
+            _ => throw new ArgumentException("Invalid number of parallel clients: " + parallelClients)
         };
     }
 }

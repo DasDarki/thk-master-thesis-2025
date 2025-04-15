@@ -18,7 +18,7 @@ import (
 )
 
 const URL = "https://localhost:2504"
-const REMOTE_URL = "https://thkm25_webtransport.nauri.io"
+const REMOTE_URL = "https://thkm25_webtransport.nauri.io:2504"
 
 func main() {
 	url, runID := parseArguments()

@@ -18,6 +18,13 @@ var assetsDir = path.Join("..", "assets")
 var videoFile = path.Join(assetsDir, "sample_video.mp4")
 
 func main() {
+	stat, err := os.Stat(videoFile)
+	if err != nil {
+		log.Fatalf("Failed to get file info: %v", err)
+	}
+
+	log.Printf("File %s exists, size: %d bytes", videoFile, stat.Size())
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
