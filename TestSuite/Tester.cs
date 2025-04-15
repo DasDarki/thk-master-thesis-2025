@@ -78,7 +78,7 @@ public static class Tester
         request.AddJsonBody(new
         {
             Protocol = protocol,
-            Environment = env,
+            Enviroment = env,
             TimeSlot = timeSlot,
             ClientID = clientID,
             ParallelClients = parallelClients
