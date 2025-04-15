@@ -281,6 +281,10 @@ func main() {
 			return err
 		}
 
+		if _, ok := dto["@end"]; ok {
+			run.TestEnd = time.Now()
+		}
+
 		return nil
 	}
 

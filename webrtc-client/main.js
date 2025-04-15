@@ -65,10 +65,12 @@ async function handle() {
         const cpuAfter = await getCpuUsagePercentage();
         const ramAfter = await getRamUsageBytes();
         const [lostAfter, recvAfter] = await getPacketStats();
+        const connectionEnd = Date.now();
 
         await collectMetrics({
-          "TransferStartUnix": Date.now(),
-          "ConnectionDuration": Date.now() - connectionEstablished,
+          "@end": true,
+          "TransferEndUnix": connectionEnd / 1000,
+          "ConnectionDuration": connectionEnd - connectionEstablished,
           "CpuClientPercentBefore": cpuBefore,
           "CpuClientPercentWhile": cpuWhile,
           "CpuClientPercentAfter": cpuAfter,

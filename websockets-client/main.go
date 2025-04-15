@@ -23,6 +23,7 @@ func main() {
 	conn, _, err := websocket.DefaultDialer.Dial(url+"/stream?runID="+fmt.Sprintf("%d", runID), nil)
 	if err != nil {
 		collectMetrics(runID, map[string]any{
+			"@end":  true,
 			"error": fmt.Sprintf("Failed to dial WebSockets: %v", err),
 		})
 		log.Fatalf("Failed to dial WebSockets: %v", err)
@@ -50,6 +51,26 @@ func main() {
 
 	defer file.Close()
 
+	defer func() {
+		cpuAfter := getCpuUsagePercentage()
+		ramAfter := getRamUsageBytes()
+		lostAfter, recvAfter := getPacketStats()
+
+		collectMetrics(runID, map[string]any{
+			"@end":                   true,
+			"TransferEndUnix":        time.Now().Unix(),
+			"ConnectionDuration":     time.Since(connectEstablishTime).Milliseconds(),
+			"CpuClientPercentBefore": cpuBefore,
+			"CpuClientPercentWhile":  cpuWhile,
+			"CpuClientPercentAfter":  cpuAfter,
+			"RamClientBytesBefore":   ramBefore,
+			"RamClientBytesWhile":    ramWhile,
+			"RamClientBytesAfter":    ramAfter,
+			"LostPackets":            lostAfter - lost,
+			"BytesSentTotal":         recvAfter - recv,
+		})
+	}()
+
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
@@ -58,6 +79,7 @@ func main() {
 			}
 
 			collectMetrics(runID, map[string]any{
+				"@end":  true,
 				"error": fmt.Sprintf("Failed to read message: %v", err),
 			})
 
@@ -71,23 +93,6 @@ func main() {
 
 		log.Printf("Wrote %d bytes", n)
 	}
-
-	cpuAfter := getCpuUsagePercentage()
-	ramAfter := getRamUsageBytes()
-	lostAfter, recvAfter := getPacketStats()
-
-	collectMetrics(runID, map[string]any{
-		"TransferEndUnix":        time.Now().Unix(),
-		"ConnectionDuration":     time.Since(connectEstablishTime).Milliseconds(),
-		"CpuClientPercentBefore": cpuBefore,
-		"CpuClientPercentWhile":  cpuWhile,
-		"CpuClientPercentAfter":  cpuAfter,
-		"RamClientBytesBefore":   ramBefore,
-		"RamClientBytesWhile":    ramWhile,
-		"RamClientBytesAfter":    ramAfter,
-		"LostPackets":            lostAfter - lost,
-		"BytesSentTotal":         recvAfter - recv,
-	})
 
 	log.Println("Done")
 }

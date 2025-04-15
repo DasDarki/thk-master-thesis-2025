@@ -32,6 +32,7 @@ func main() {
 	resp, sess, err := d.Dial(context.Background(), url+"/stream?runID="+fmt.Sprintf("%d", runID), nil)
 	if err != nil {
 		collectMetrics(runID, map[string]any{
+			"@end":  true,
 			"error": fmt.Sprintf("Failed to dial: %v", err),
 		})
 		log.Fatalf("Failed to dial: %v", err)
@@ -57,6 +58,7 @@ func main() {
 	stream, err := sess.AcceptUniStream(context.Background())
 	if err != nil {
 		collectMetrics(runID, map[string]any{
+			"@end":  true,
 			"error": fmt.Sprintf("Could not accept stream: %v", err),
 		})
 
@@ -73,6 +75,7 @@ func main() {
 	n, err := io.Copy(file, stream)
 	if err != nil {
 		collectMetrics(runID, map[string]any{
+			"@end":  true,
 			"error": fmt.Sprintf("Could not copy stream data: %v", err),
 		})
 
@@ -84,6 +87,7 @@ func main() {
 	lostAfter, recvAfter := getPacketStats()
 
 	collectMetrics(runID, map[string]any{
+		"@end":                   true,
 		"TransferEndUnix":        time.Now().Unix(),
 		"ConnectionDuration":     time.Since(connectEstablishTime).Milliseconds(),
 		"CpuClientPercentBefore": cpuBefore,

@@ -51,6 +51,7 @@ func main() {
 	resp, err := client.Get(url + "/stream?runID=" + fmt.Sprintf("%d", runID))
 	if err != nil {
 		collectMetrics(runID, map[string]any{
+			"@end":  true,
 			"error": fmt.Sprintf("Failed to GET: %v", err),
 		})
 		log.Fatalf("Failed to GET: %v", err)
@@ -73,6 +74,7 @@ func main() {
 				log.Println("Connection closed by server")
 			} else {
 				collectMetrics(runID, map[string]any{
+					"@end":  true,
 					"error": fmt.Sprintf("Failed to read response body: %v", err),
 				})
 				log.Fatalf("Failed to read response body: %v", err)
@@ -88,6 +90,7 @@ func main() {
 	lostAfter, recvAfter := getPacketStats()
 
 	collectMetrics(runID, map[string]any{
+		"@end":                   true,
 		"TransferEndUnix":        time.Now().Unix(),
 		"ConnectionDuration":     time.Since(connectEstablishTime).Milliseconds(),
 		"CpuClientPercentBefore": cpuBefore,
