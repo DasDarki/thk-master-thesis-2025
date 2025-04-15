@@ -52,7 +52,7 @@ func main() {
 	if err != nil {
 		collectMetrics(runID, map[string]any{
 			"@end":  true,
-			"error": fmt.Sprintf("Failed to GET: %v", err),
+			"Error": fmt.Sprintf("Failed to GET: %v", err),
 		})
 		log.Fatalf("Failed to GET: %v", err)
 	}
@@ -75,7 +75,7 @@ func main() {
 			} else {
 				collectMetrics(runID, map[string]any{
 					"@end":  true,
-					"error": fmt.Sprintf("Failed to read response body: %v", err),
+					"Error": fmt.Sprintf("Failed to read response body: %v", err),
 				})
 				log.Fatalf("Failed to read response body: %v", err)
 			}

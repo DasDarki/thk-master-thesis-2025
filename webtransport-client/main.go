@@ -33,7 +33,7 @@ func main() {
 	if err != nil {
 		collectMetrics(runID, map[string]any{
 			"@end":  true,
-			"error": fmt.Sprintf("Failed to dial: %v", err),
+			"Error": fmt.Sprintf("Failed to dial: %v", err),
 		})
 		log.Fatalf("Failed to dial: %v", err)
 	}
@@ -59,7 +59,7 @@ func main() {
 	if err != nil {
 		collectMetrics(runID, map[string]any{
 			"@end":  true,
-			"error": fmt.Sprintf("Could not accept stream: %v", err),
+			"Error": fmt.Sprintf("Could not accept stream: %v", err),
 		})
 
 		log.Fatalf("Could not accept stream: %v", err)
@@ -76,7 +76,7 @@ func main() {
 	if err != nil {
 		collectMetrics(runID, map[string]any{
 			"@end":  true,
-			"error": fmt.Sprintf("Could not copy stream data: %v", err),
+			"Error": fmt.Sprintf("Could not copy stream data: %v", err),
 		})
 
 		log.Fatalf("Could not copy stream data: %v", err)

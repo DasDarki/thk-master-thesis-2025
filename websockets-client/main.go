@@ -24,7 +24,7 @@ func main() {
 	if err != nil {
 		collectMetrics(runID, map[string]any{
 			"@end":  true,
-			"error": fmt.Sprintf("Failed to dial WebSockets: %v", err),
+			"Error": fmt.Sprintf("Failed to dial WebSockets: %v", err),
 		})
 		log.Fatalf("Failed to dial WebSockets: %v", err)
 	}
@@ -69,18 +69,23 @@ func main() {
 			"LostPackets":            lostAfter - lost,
 			"BytesSentTotal":         recvAfter - recv,
 		})
+
+		log.Printf("Connection duration: %d ms", time.Since(connectEstablishTime).Milliseconds())
+		log.Printf("CPU usage before: %.2f%%", cpuBefore)
+		log.Printf("CPU usage while: %.2f%%", cpuWhile)
+		log.Printf("CPU usage after: %.2f%%", cpuAfter)
 	}()
 
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseAbnormalClosure) {
 				break
 			}
 
 			collectMetrics(runID, map[string]any{
 				"@end":  true,
-				"error": fmt.Sprintf("Failed to read message: %v", err),
+				"Error": fmt.Sprintf("Failed to read message: %v", err),
 			})
 
 			log.Fatalf("Failed to read message: %v", err)
