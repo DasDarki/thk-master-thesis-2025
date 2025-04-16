@@ -6,6 +6,23 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+        var action = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("Which action do you want to perform?")
+            .AddChoices("Run Tests", "Clean Results"));
+
+        switch (action)
+        {
+            case "Run Tests":
+                RunTests();
+                break;
+            case "Clean Results":
+                Cleaner.Clean();
+                break;
+        }
+    }
+
+    private static void RunTests()
+    {
         var local = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title("Which environment do you want to run the tests in?")
             .AddChoices(Tester.EnvironmentLocal, Tester.EnvironmentRemote)) == Tester.EnvironmentLocal;
