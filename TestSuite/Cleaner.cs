@@ -38,7 +38,7 @@ public static class Cleaner
                 }
                 else if (objValue is double doubleValue)
                 {
-                    value = doubleValue.ToString("0.00", CultureInfo.InvariantCulture);
+                    value = doubleValue.ToString(CultureInfo.InvariantCulture);
                 }
                 else if (objValue is string stringValue)
                 {

@@ -1,0 +1,6 @@
+Metrik;Test;Statistik;p-Wert;Anmerkung
+Latenz (Transferdauer);Kruskal-Wallis;1429.5739;0.0;Signifikant
+Durchsatz;Kruskal-Wallis;1429.5739;0.0;Signifikant
+Bandbreiteneffizienz;Kruskal-Wallis;n/a;n/a;Keine Varianz in mind. 1 Gruppe
+CPU-Nutzung;Kruskal-Wallis;56.7635;0.0;Signifikant
+RAM-Nutzung;Kruskal-Wallis;41.2432;0.0;Signifikant
